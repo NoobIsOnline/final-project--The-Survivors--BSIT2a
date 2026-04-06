@@ -1,2 +1,2 @@
-# final-project-[groupname]-BSIT2a
+# final-project-The Survivors-BSIT2a
 
