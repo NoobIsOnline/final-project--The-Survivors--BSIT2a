@@ -77,40 +77,53 @@
     </div>
 
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    const API_URL = 'http://localhost:3000/api';
 
-            const name = document.getElementById('regName').value.trim();
-            const id = document.getElementById('regId').value.trim().toUpperCase();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const role = document.getElementById('regRole').value;
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-            if (!name || !id || !email || !password) {
-                alert("Please fill all fields");
-                return;
-            }
+        const username = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const confirmPassword = document.getElementById('regConfirmPassword').value;
+        const role = document.getElementById('regRole').value;
+        const studentId = document.getElementById('regStudentId').value.trim();
 
-            let users = JSON.parse(localStorage.getItem("users")) || [];
+        if (password !== confirmPassword) {
+            alert("Passwords don't match!");
+            return;
+        }
 
-            if (users.some(user => user.id === id)) {
-                alert("This ID is already registered!");
-                return;
-            }
-
-            users.push({
-                id: id,
-                name: name,
-                email: email,
-                password: password,
-                role: role
+        try {
+            const response = await fetch(`${API_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username,
+                    email,
+                    password,
+                    role,
+                    studentId: role === 'student' ? studentId : undefined
+                })
             });
 
-            localStorage.setItem("users", JSON.stringify(users));
+            const data = await response.json();
 
-            alert("✅ Registration successful!\nYou can now login with your ID and password.");
-            window.location.href = "login.html";
-        });
-    </script>
+            if (!response.ok) {
+                alert(data.message || "Registration failed");
+                return;
+            }
+
+            alert('Registration successful! Please login.');
+            window.location.href = 'login.html';
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Cannot connect to server. Make sure backend is running.');
+        }
+    });
+</script>
 </body>
 </html>
