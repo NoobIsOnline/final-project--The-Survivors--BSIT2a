@@ -1,4 +1,4 @@
-# 🎓 Smart Attendance System with Auto-Time Classification
+# Smart Attendance System with Auto-Time Classification
 
 <p align="center">
   <strong>Efficient • Accurate • Automated</strong>
@@ -6,26 +6,26 @@
 
 ---
 
-## 📝 Project Overview
+## Project Overview
 In many educational institutions, attendance tracking is still done manually, leading to errors, time consumption, and inaccurate records. The **Smart Attendance System** is a web-based platform designed to automate this process. By utilizing real-time tracking and automated classification, the system provides a faster, more reliable, and user-friendly way of managing classroom attendance.
 
 ---
 
-## 👥 Meet the Team
+## Meet the Team
 Our team consists of dedicated members handling specialized roles to ensure the project's success:
 
 | Name | Role |
 | :--- | :--- |
-| **Jexson Sedon** | 🏗️ Project Manager |
-| **John Roan Ballester** | ⚙️ Backend Developer |
-| **Judy Pearl Balictar** | 🎨 Frontend Developer |
-| **Michelle Diaz** | 📂 Database Manager |
-| **Alyssa Jenille Reantaso** | 🚀 GitHub Manager |
-| **Ronel Garcia** | 🐞 Debugger |
+| **Jexson Sedon** | Project Manager |
+| **John Roan Ballester** |  Backend Developer |
+| **Judy Pearl Balictar** |  Frontend Developer |
+| **Michelle Diaz** |  Database Manager |
+| **Alyssa Jenille Reantaso** |  GitHub Manager |
+| **Ronel Garcia** | Debugger |
 
 ---
 
-## 🎯 System Purpose
+## System Purpose
 The primary goals of this project are:
 * **Automate** the process of recording attendance.
 * **Reduce** manual errors in tracking student presence.
@@ -34,7 +34,7 @@ The primary goals of this project are:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### 1️⃣ Student Check-In System
 Students can input their unique ID to record their attendance quickly and easily, minimizing classroom disruption.
