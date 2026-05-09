@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Load student activity summary
+  // Load student activity summary from NEW backend endpoint
   async function loadStudentSummary() {
     const grid = document.getElementById('studentSummaryGrid');
     if (!grid) return;
@@ -118,44 +118,20 @@ document.addEventListener('DOMContentLoaded', function() {
     grid.innerHTML = '<div class="text-center loading" style="grid-column: 1/-1;">Loading student activity data...</div>';
 
     try {
-      const response = await fetch('http://localhost:3000/api/attendance', {
+      const response = await fetch('http://localhost:3000/api/attendance/student-summary', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (!response.ok || !data.data || data.data.length === 0) {
+      if (!response.ok || !result.data || result.data.length === 0) {
         grid.innerHTML = '<div class="text-center" style="grid-column: 1/-1; padding: 2rem;">No student activity data available yet</div>';
         return;
       }
 
-      // Group records by student
-      const studentMap = {};
-      data.data.forEach(record => {
-        const studentId = record.studentId || 'unknown';
-        const studentName = record.user?.username || record.studentId || 'Unknown';
-
-        if (!studentMap[studentId]) {
-          studentMap[studentId] = {
-            name: studentName,
-            id: studentId,
-            Early: 0,
-            'On-Time': 0,
-            Late: 0,
-            Absent: 0,
-            total: 0
-          };
-        }
-
-        if (studentMap[studentId][record.status] !== undefined) {
-          studentMap[studentId][record.status]++;
-        }
-        studentMap[studentId].total++;
-      });
-
-      const students = Object.values(studentMap);
+      const students = result.data;
       renderStudentCards(students);
 
       // Search filter for students
@@ -164,8 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
         studentSearchInput.addEventListener('input', function() {
           const term = this.value.toLowerCase();
           const filtered = students.filter(s => 
-            s.name.toLowerCase().includes(term) || 
-            s.id.toLowerCase().includes(term)
+            s.studentName.toLowerCase().includes(term) || 
+            s.studentId.toLowerCase().includes(term)
           );
           renderStudentCards(filtered);
         });
@@ -180,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           switch(sortBy) {
             case 'name':
-              sorted.sort((a, b) => a.name.localeCompare(b.name));
+              sorted.sort((a, b) => a.studentName.localeCompare(b.studentName));
               break;
             case 'absent':
               sorted.sort((a, b) => b.Absent - a.Absent);
@@ -213,15 +189,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     grid.innerHTML = students.map(student => {
       const total = student.total || 1;
-      const earlyPct = ((student.Early / total) * 100).toFixed(1);
-      const ontimePct = ((student['On-Time'] / total) * 100).toFixed(1);
-      const latePct = ((student.Late / total) * 100).toFixed(1);
-      const absentPct = ((student.Absent / total) * 100).toFixed(1);
+      const earlyPct = student.percentages?.Early?.toFixed(1) || ((student.Early / total) * 100).toFixed(1);
+      const ontimePct = student.percentages?.['On-Time']?.toFixed(1) || ((student['On-Time'] / total) * 100).toFixed(1);
+      const latePct = student.percentages?.Late?.toFixed(1) || ((student.Late / total) * 100).toFixed(1);
+      const absentPct = student.percentages?.Absent?.toFixed(1) || ((student.Absent / total) * 100).toFixed(1);
+
+      // Determine status message
+      let statusMsg = '';
+      if (student.Absent === 0 && student.Late === 0) {
+        statusMsg = ' ⭐ Perfect Attendance!';
+      } else if (student.Absent >= 5) {
+        statusMsg = ' ⚠️ High Absence Rate';
+      } else if (student.Late >= 5) {
+        statusMsg = ' 🕐 Frequently Late';
+      }
 
       return `
         <div class="student-card">
-          <h4>${student.name}</h4>
-          <div class="student-id">ID: ${student.id}</div>
+          <h4>${student.studentName}</h4>
+          <div class="student-id">ID: ${student.studentId}</div>
           <div class="mini-stats">
             <span class="mini-stat early">Early: ${student.Early}</span>
             <span class="mini-stat ontime">On-Time: ${student['On-Time']}</span>
@@ -229,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <span class="mini-stat absent">Absent: ${student.Absent}</span>
           </div>
           <div style="margin-top: 0.75rem; font-size: 0.8rem; color: #7f8c8d;">
-            Total Records: ${student.total}
+            📊 Total Records: ${student.total}${statusMsg}
           </div>
           <div style="margin-top: 0.5rem;">
             <div style="display: flex; gap: 0.25rem; margin-bottom: 0.25rem;">

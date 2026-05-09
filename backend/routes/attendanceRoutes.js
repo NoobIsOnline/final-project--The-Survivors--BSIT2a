@@ -6,7 +6,8 @@ const {
   update,
   deleteAttendance,
   getStats,
-  getMyAttendance
+  getMyAttendance,
+  getStudentSummary
 } = require('../controllers/attendanceController');
 
 const { protect, authorize } = require('../middleware/authMiddleware');
@@ -24,6 +25,7 @@ router.get('/my-attendance', protect, authorize('student'), getMyAttendance);
 
 router.get('/', protect, authorize('teacher', 'admin'), getAll);
 router.get('/stats', protect, authorize('teacher', 'admin'), getStats);
+router.get('/student-summary', protect, authorize('teacher', 'admin'), getStudentSummary);
 router.get('/:id', protect, authorize('teacher', 'admin'), getById);
 router.put('/:id', protect, authorize('admin'), update);
 router.delete('/:id', protect, authorize('admin'), deleteAttendance);
