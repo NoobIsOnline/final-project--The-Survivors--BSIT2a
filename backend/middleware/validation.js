@@ -27,8 +27,8 @@ exports.registerValidation = [
     body('studentId')
         .trim()
         .notEmpty().withMessage('Student ID is required')
-        .matches(/^2026-\d{4}-\d{5}$|^(TEACHER)\d{2}$/i)
-        .withMessage('Invalid ID format. Use 2026-XXXX-XXXXX for students or TEACHER01 for teachers')
+        .matches(/^20(2[0-6])-\d{4}-\d{5}$|^(TEACHER)\d{2}$/i)
+        .withMessage('Invalid ID format. Use YYYY-XXXX-XXXXX (2020-2026) for students or TEACHER01 for teachers')
 ];
 
 exports.loginValidation = [
